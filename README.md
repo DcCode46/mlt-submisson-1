@@ -1,6 +1,7 @@
 # Laporan Proyek Machine Learning - Dwi NurCahyo Purbonegoro
 
 ## Domain Proyek: Prediksi Harga Mobil Bekas
+![image](https://github.com/user-attachments/assets/8991718b-7ea3-4fbc-a2ed-802a9ee3b983)
 
 ### Latar Belakang
 Harga mobil bekas sangat dipengaruhi oleh beberapa faktor utama seperti **merk mobil**, **jarak tempuh**, dan **umur mobil**. Dalam banyak kasus, mobil dengan **jarak tempuh rendah**, **merk premium**, atau **mobil klasik** dengan jumlah terbatas memiliki harga jual yang lebih tinggi.
