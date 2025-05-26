@@ -192,19 +192,59 @@ Setiap model disiapkan dengan parameter dasar dan `random_state=42` agar hasilny
 
 ![image](https://github.com/user-attachments/assets/7cbacae7-f715-43aa-8c76-dd2de0398dd9)
 
-Pada tahap ini, dilakukan pelatihan dan evaluasi terhadap setiap model regresi menggunakan data yang telah dibagi sebelumnya.
+Pada tahap ini, dilakukan pelatihan dan evaluasi terhadap setiap model regresi menggunakan data yang telah dibagi sebelumnya menjadi data pelatihan dan data pengujian. Setiap model dalam dictionary `models` dilatih menggunakan data training (`X_train`, `y_train`). Setelah pelatihan, model digunakan untuk memprediksi harga pada data testing (`X_test`), menghasilkan prediksi `y_pred`.
 
-Setiap model dalam dictionary models dilatih menggunakan data training (X_train, y_train). Setelah pelatihan, model digunakan untuk memprediksi harga pada data testing (X_test), menghasilkan prediksi y_pred.
+Prediksi tersebut kemudian dievaluasi menggunakan tiga metrik utama untuk menilai performa prediktif model terhadap target **harga smartphone**, yang telah ditransformasikan menggunakan fungsi logaritma (`log(Price)`).
 
-Hasil prediksi kemudian dievaluasi menggunakan tiga metrik:
+#### **Metrik Evaluasi**
 
-MAE (Mean Absolute Error): rata-rata selisih absolut antara nilai asli dan prediksi.
+Tiga metrik evaluasi utama yang digunakan adalah:
 
-RMSE (Root Mean Squared Error): akar dari rata-rata selisih kuadrat, lebih sensitif terhadap outlier.
+1. **MAE (Mean Absolute Error)**
+   Mengukur rata-rata absolut selisih antara nilai prediksi dan nilai aktual. Semakin kecil nilainya, semakin baik model dalam memberikan prediksi yang akurat.
 
-R² (R-squared Score): menunjukkan seberapa baik model menjelaskan variasi data target (semakin mendekati 1, semakin baik).
+2. **RMSE (Root Mean Squared Error)**
+   Mengukur akar dari rata-rata kuadrat selisih antara prediksi dan nilai aktual. Metrik ini lebih sensitif terhadap outlier dibanding MAE.
 
-Hasil evaluasi dari tiap model disimpan dalam dictionary results, lalu dikonversi menjadi DataFrame (results_df) agar lebih mudah dibaca dan dibandingkan. Evaluasi dilakukan terhadap target yang telah ditransformasikan ke log(Price).
+3. **R² (R-squared Score)**
+   Mengukur seberapa baik model dapat menjelaskan variansi dari data target. Nilai R² mendekati 1 menunjukkan model sangat baik, sedangkan nilai mendekati 0 menandakan model kurang baik.
+
+Metrik-metrik ini dipilih karena sesuai dan relevan dengan tipe proyek regresi harga yang bersifat numerik dan kontinu. Dengan metrik ini, model dapat dievaluasi tidak hanya dari akurasi rata-rata prediksi, tetapi juga kemampuannya menangkap pola dan variasi dalam data.
+
+#### **Hasil Evaluasi dan Komparasi Model**
+
+| Model                   | MAE      | RMSE     | R²       |
+| ----------------------- | -------- | -------- | -------- |
+| Linear Regression       | 0.946485 | 1.367330 | 0.285271 |
+| Random Forest Regressor | 0.442551 | 0.893157 | 0.695034 |
+| XGBoost Regressor       | 0.594116 | 0.988063 | 0.626781 |
+
+#### **Interpretasi Hasil**
+
+* **Linear Regression** memiliki performa terburuk, dengan R² hanya **0.285**, menandakan model ini hanya mampu menjelaskan sekitar 28,5% variasi dalam data. Ini menunjukkan bahwa pendekatan linier kurang memadai untuk menangkap hubungan kompleks antar fitur produk dengan harga.
+* **Random Forest Regressor** memberikan performa terbaik dengan MAE paling rendah (**0.4425**) dan R² tertinggi (**0.695**), menunjukkan kemampuannya dalam memodelkan hubungan non-linier serta menangani kompleksitas data secara lebih efektif.
+* **XGBoost Regressor** juga menunjukkan performa yang baik, namun sedikit di bawah Random Forest dalam semua metrik, menjadikannya alternatif yang cukup kompetitif.
+
+**Model terbaik:** Berdasarkan ketiga metrik evaluasi, **Random Forest Regressor** dipilih sebagai model terbaik karena mampu menghasilkan prediksi paling akurat dan stabil dalam konteks proyek ini.
+
+#### **Keterkaitan dengan Business Understanding**
+
+Evaluasi model ini secara langsung berkaitan dengan pemenuhan kebutuhan bisnis, yaitu membangun sistem yang dapat memperkirakan harga smartphone berdasarkan fitur produk secara akurat dan efisien. Berikut penilaiannya terhadap business goals:
+
+1. **Apakah sudah menjawab setiap problem statement?**
+   
+   ✅ Ya. Sistem telah berhasil membangun model yang mampu memprediksi harga smartphone berdasarkan informasi ulasan, rating, dan deskripsi produk, sebagaimana ditetapkan dalam problem statement.
+
+2. **Apakah berhasil mencapai setiap goals yang diharapkan?**
+   
+   ✅ Ya. Dengan nilai R² sebesar **0.695**, sistem sudah cukup baik untuk digunakan dalam lingkungan produksi yang mendukung pengambilan keputusan, seperti sistem rekomendasi atau evaluasi harga pasar.
+
+3. **Apakah setiap solusi statement yang direncanakan berdampak? Jelaskan!**
+   
+   ✅ Ya. Dampaknya meliputi:
+
+   * **Untuk pengguna**: Sistem memungkinkan pengguna membandingkan harga pasar dengan harga yang diprediksi model. Hal ini membantu mereka menilai apakah produk yang ditampilkan terlalu mahal atau wajar.
+   * **Untuk pelaku bisnis/platform**: Model ini dapat digunakan sebagai dasar dalam menentukan strategi harga otomatis berdasarkan fitur produk dan ulasan, sehingga dapat meningkatkan efisiensi pricing dan potensi penjualan.
 
 ---
 
