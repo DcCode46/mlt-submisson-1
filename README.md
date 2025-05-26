@@ -240,7 +240,7 @@ Hasil terbaik diperoleh pada:
 
 max_depth=6, learning_rate=0.05, n_estimators=200, dengan MAE negatif sebesar -0.673, artinya model cukup presisi terhadap target.
 
-🔧 Proses ini bertujuan untuk menemukan kombinasi parameter terbaik dari tiap model yang menghasilkan performa optimal pada data.
+Proses ini bertujuan untuk menemukan kombinasi parameter terbaik dari tiap model yang menghasilkan performa optimal pada data.
 
 ### Feature Importance
 
