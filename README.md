@@ -178,16 +178,105 @@ Selanjutnya, dibuat flag **`Is_Luxury`** yang menandai apakah mobil berasal dari
 
 ![image](https://github.com/user-attachments/assets/cc5561e0-1d3f-4433-b15e-00ffec3a6de3)
 
-Pada tahap ini, dilakukan inisialisasi beberapa model regresi yang akan digunakan untuk memprediksi harga mobil berdasarkan fitur-fitur yang telah diproses sebelumnya.
+#### **Model 1: Linear Regression**
 
-Tiga model yang dipilih adalah:
+##### **Cara Kerja**
 
-* **Linear Regression**: model dasar yang sederhana dan cepat, cocok untuk melihat hubungan linear antar variabel.
-* **Random Forest Regressor**: model berbasis ensemble dari beberapa decision tree, mampu menangani data non-linear dan lebih tahan terhadap overfitting.
-* **XGBoost Regressor**: model boosting yang sangat powerful dan sering unggul dalam kompetisi machine learning, dirancang untuk efisiensi dan performa tinggi.
+Linear Regression merupakan algoritma statistik yang memodelkan hubungan antara variabel input (fitur) dengan target (harga) dalam bentuk garis lurus. Model ini mencari koefisien terbaik (β) dengan meminimalkan selisih kuadrat antara prediksi dan nilai sebenarnya menggunakan metode **Ordinary Least Squares (OLS)**.
 
-Setiap model disiapkan dengan parameter dasar dan `random_state=42` agar hasilnya konsisten saat dijalankan ulang. Model-model ini nantinya akan dibandingkan kinerjanya pada data yang sama.
+Persamaan dasarnya:
 
+$$
+y = β_0 + β_1x_1 + β_2x_2 + \dots + β_nx_n
+$$
+
+##### **Parameter**
+
+Linear Regression menggunakan **parameter default** dari `sklearn.linear_model.LinearRegression()`, yang berarti:
+
+* `fit_intercept=True`: menyertakan bias/intersep.
+* `normalize=False`: data tidak dinormalisasi secara otomatis.
+* `n_jobs=None`: menggunakan 1 core CPU.
+
+##### **Kelebihan dan Kekurangan (Opsional)**
+
+**Kelebihan**:
+
+* Cepat dan sederhana.
+* Interpretasi model mudah (koefisien dapat menunjukkan pengaruh fitur).
+
+**Kekurangan**:
+
+* Tidak cocok untuk hubungan non-linear.
+* Sangat sensitif terhadap multikolinearitas dan outlier.
+
+---
+
+#### **Model 2: Random Forest Regressor**
+
+##### **Cara Kerja**
+
+Random Forest adalah algoritma ensemble berbasis pohon keputusan. Model ini membangun banyak pohon (decision trees) secara acak dari subset data dan fitur, lalu menggabungkan prediksi masing-masing pohon (melalui rata-rata) untuk menghasilkan prediksi akhir. Teknik ini mengurangi overfitting dan meningkatkan akurasi.
+
+##### **Parameter**
+
+Parameter yang digunakan (dengan tuning ringan):
+
+* `n_estimators=100`: jumlah pohon sebanyak 100.
+* `random_state=42`: untuk memastikan hasil replikasi.
+* Parameter lain menggunakan **default**, seperti:
+
+  * `max_depth=None`: pohon tumbuh sampai semua daun murni.
+  * `min_samples_split=2`: minimal 2 sampel untuk membagi node.
+
+##### **Kelebihan dan Kekurangan (Opsional)**
+
+**Kelebihan**:
+
+* Handal terhadap data non-linear dan fitur kompleks.
+* Tidak mudah overfitting dibandingkan decision tree tunggal.
+* Menyediakan informasi feature importance.
+
+**Kekurangan**:
+
+* Model besar dan lambat saat prediksi pada data sangat besar.
+* Kurang interpretatif dibanding regresi linier.
+
+---
+
+#### **Model 3: XGBoost Regressor**
+
+##### **Cara Kerja**
+
+XGBoost (Extreme Gradient Boosting) adalah metode boosting berbasis pohon yang membangun model secara bertahap. Setiap model baru mencoba memperbaiki kesalahan dari model sebelumnya dengan memperkecil fungsi loss. Teknik ini menggabungkan **gradient descent** dengan pohon keputusan sebagai weak learner.
+
+##### **Parameter**
+
+Model XGBoost menggunakan parameter awal berikut:
+
+* `n_estimators=100`: jumlah model boosting.
+* `random_state=42`: replikasi hasil.
+* `verbosity=0`: nonaktifkan log output.
+* Parameter lainnya menggunakan **default**, contohnya:
+
+  * `learning_rate=0.3`
+  * `max_depth=6`
+  * `subsample=1`
+
+> **Catatan**: Jika dilakukan hyperparameter tuning, parameter seperti `learning_rate`, `max_depth`, dan `subsample` bisa disesuaikan untuk meningkatkan performa.
+
+##### **Kelebihan dan Kekurangan (Opsional)**
+
+**Kelebihan**:
+
+* Sangat akurat untuk banyak tugas regresi dan klasifikasi.
+* Menangani missing values secara otomatis.
+* Mendukung regularisasi (mencegah overfitting).
+
+**Kekurangan**:
+
+* Komputasi lebih berat dibanding model sederhana.
+* Perlu tuning parameter untuk performa optimal.
 ### Latih dan Evaluasi Model:
 
 ![image](https://github.com/user-attachments/assets/7cbacae7-f715-43aa-8c76-dd2de0398dd9)
