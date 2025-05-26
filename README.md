@@ -107,104 +107,172 @@ Kode diatas menghasilkan ouput untuk melihat 5 baris pertama dari dataset yang b
 ## Data Preparation
 
 ### Langkah-langkah yang dilakukan:
-- **Menyalin dataset** agar tidak mengubah data asli saat dilakukan data preparation.
+- **Menyalin dataset**
+  agar tidak mengubah data asli saat dilakukan data preparation.
 
 ![image](https://github.com/user-attachments/assets/f5766bcd-b61a-48da-af4a-319dbbc03621)
-- **Hapus Duplikasi Data** Pada tahap ini, dilakukan pembersihan data dari baris-baris duplikat menggunakan fungsi drop_duplicates(). Langkah ini penting untuk memastikan bahwa setiap entri dalam dataset bersifat unik dan tidak terjadi pengulangan yang dapat memengaruhi hasil analisis. Setelah penghapusan, jumlah data yang tersisa adalah 18.924 baris, yang berarti tidak ada baris duplikat dalam dataset. Pembersihan ini merupakan bagian penting dari tahap pra-pemrosesan untuk menjaga kualitas dan keandalan data sebelum analisis lebih lanjut dilakukan.
+- **Hapus Duplikasi Data**
+  Pada tahap ini, dilakukan pembersihan data dari baris-baris duplikat menggunakan fungsi drop_duplicates(). Langkah ini penting untuk memastikan bahwa setiap entri dalam dataset bersifat unik dan tidak terjadi pengulangan yang dapat memengaruhi hasil analisis. Setelah penghapusan, jumlah data yang tersisa adalah 18.924 baris, yang berarti tidak ada baris duplikat dalam dataset. Pembersihan ini merupakan bagian penting dari tahap pra-pemrosesan untuk menjaga kualitas dan keandalan data sebelum analisis lebih lanjut dilakukan.
 
 ![image](https://github.com/user-attachments/assets/1c610e0a-8f3c-4959-af1f-02f9c79387e4)
 
-- **Cleaning dan Transformasi Data** Pada tahap ini, dilakukan serangkaian pembersihan dan transformasi terhadap beberapa fitur dalam dataset untuk memastikan konsistensi dan kualitas data yang akan digunakan dalam proses analisis.
+- **Cleaning dan Transformasi Data**
 
-  1. Pertama, kolom Levy dibersihkan dengan mengganti nilai '-' menjadi NaN, lalu menghapus tanda koma dan mengubahnya menjadi tipe data numerik (float). Ini penting karena Levy semestinya bernilai angka, namun dalam bentuk awalnya masih berupa string. Setelah itu, nilai-nilai yang hilang pada kolom Levy diisi menggunakan nilai median dari kolom tersebut. Pengisian dengan median dipilih karena lebih tahan terhadap outlier dibandingkan dengan rata-rata.
+  Pada tahap ini, dilakukan pembersihan dan transformasi data untuk memastikan konsistensi nilai serta pembuatan fitur baru yang relevan.
 
-  2. Selanjutnya, kolom Mileage juga dibersihkan dari teks ' km' dan tanda koma agar dapat dikonversi menjadi angka (float). Proses ini diperlukan agar data jarak tempuh kendaraan bisa dianalisis secara numerik, misalnya untuk korelasi dengan harga atau usia kendaraan.
+  Kolom Levy dibersihkan dengan mengganti tanda '-' menjadi NaN, menghapus koma, dan mengonversinya ke tipe float. Nilai yang hilang kemudian diisi dengan median agar tidak memengaruhi distribusi data.
+Kolom Mileage juga dibersihkan dengan menghapus satuan ' km' dan koma sebelum dikonversi menjadi float.
 
-  3. Kemudian dibuat fitur baru bernama Is_Turbo. Fitur ini menunjukkan apakah kendaraan memiliki turbo atau tidak. Nilainya dihasilkan dengan memeriksa apakah string 'Turbo' terdapat dalam kolom Engine volume, lalu dikonversi menjadi nilai biner (1 untuk ya, 0 untuk tidak). Pembuatan fitur ini dilakukan sebelum membersihkan kolom Engine volume agar informasi tentang turbo tidak hilang.
+  Sebelum mengekstrak nilai numerik dari kolom Engine volume, dibuat fitur biner baru bernama Is_Turbo untuk menandai keberadaan turbo pada mesin. Setelah itu, kata 'Turbo' dihapus dari kolom aslinya, lalu dikonversi ke float.
 
-  4. Setelah fitur turbo berhasil diekstrak, kolom Engine volume dibersihkan dengan menghapus teks ' Turbo', kemudian dikonversi ke tipe data numerik (float). Hal ini memungkinkan kita untuk menganalisis kapasitas mesin secara langsung sebagai variabel numerik.
-
-  5. Kolom Doors yang memiliki format seperti '04-May', '02-Mar', atau '>5' diubah ke bentuk numerik menggunakan pemetaan manual (map). Nilai-nilai yang tidak dikenali dipetakan ke angka 4 sebagai default. Ini penting untuk menyederhanakan representasi jumlah pintu dalam analisis dan modeling.
-
-  5. Terakhir, kolom Leather interior diubah menjadi representasi biner menggunakan mapping 'Yes' menjadi 1 dan 'No' menjadi 0. Hal ini bertujuan untuk menyederhanakan fitur ini agar bisa digunakan dalam model machine learning yang tidak menerima input dalam bentuk string.
-
-  Seluruh langkah ini merupakan bagian dari proses pra-pemrosesan data yang bertujuan untuk mengubah data mentah menjadi bentuk yang lebih bersih, konsisten, dan siap digunakan untuk analisis maupun pemodelan machine learning.
+  Kolom Doors dikonversi dari format teks seperti '02-Mar' dan '04-May' menjadi angka menggunakan mapping sederhana. Nilai yang tidak dikenali diset default ke 4 pintu.
+  Terakhir, kolom Leather interior diubah menjadi nilai biner (1 untuk 'Yes', 0 untuk 'No') agar bisa digunakan dalam analisis numerik.
 
 ![image](https://github.com/user-attachments/assets/b4a57799-c3c5-4bb8-bea0-fcac56eaf2ae)
 
 
-- **Transformasi dan Skala Fitur :**
+- **Transformasi dan Skala Fitur**
+
   Pada tahap ini, dilakukan pembuatan beberapa fitur baru untuk memperkaya informasi dalam dataset dan mendukung proses analisis maupun pemodelan.
 
-  Pertama, dibuat fitur Car_Age yang merepresentasikan usia kendaraan dengan cara mengurangkan tahun sekarang (2025) dengan tahun produksi kendaraan. Fitur ini membantu memahami umur mobil yang dapat memengaruhi harga dan performa.
+  Fitur **`Car_Age`** dihitung dari selisih antara tahun sekarang (2025) dengan tahun produksi mobil, untuk mengetahui usia kendaraan.
+Dari situ, dihitung pula **`Mileage_per_Year`**, yaitu jarak tempuh rata-rata per tahun. Nilai tak hingga dan kosong diatasi dengan menggantinya menggunakan median.
 
-  Kemudian dihitung Mileage_per_Year, yaitu rata-rata jarak tempuh per tahun. Nilai ini diperoleh dengan membagi total jarak tempuh (Mileage) dengan usia kendaraan (Car_Age). Nilai tak hingga atau tak valid diganti dengan NaN dan diisi dengan median untuk menjaga stabilitas data.
+  Fitur kategori baru **`Age_Group`** dibuat dengan membagi usia mobil menjadi tiga kelompok: *New*, *Medium*, dan *Old*, berdasarkan rentang tahun tertentu.
+Selanjutnya, dibuat flag **`Is_Luxury`** yang menandai apakah mobil berasal dari merek mewah seperti BMW, MERCEDES-BENZ, dan lainnya.
 
-  Selanjutnya, kendaraan dikategorikan ke dalam grup usia menggunakan fitur Age_Group dengan tiga label: 'New', 'Medium', dan 'Old', berdasarkan interval umur tertentu. Ini berguna untuk klasifikasi kondisi mobil secara sederhana.
-
-  Dibuat pula fitur Is_Luxury, yaitu indikator biner apakah kendaraan termasuk merek mewah seperti BMW, Mercedes-Benz, atau Tesla. Hal ini penting untuk analisis segmen pasar.
-
-  Kemudian, untuk menyederhanakan variasi merek, hanya 10 merek terpopuler yang dipertahankan pada fitur Manufacturer, sementara merek lainnya dikategorikan sebagai 'Other'. Ini membantu mengurangi kompleksitas model.
-
-  Terakhir, ditambahkan fitur Fuel_Efficiency_Proxy, yaitu proksi efisiensi bahan bakar yang dihitung dari pembagian usia mobil dengan volume mesin. Meskipun bukan representasi langsung, fitur ini memberi indikasi kasar tentang efisiensi relatif kendaraan. Nilai tak valid juga ditangani dengan mengganti ke median.
-
-  Langkah-langkah ini bertujuan untuk memperkaya dan menyederhanakan data agar lebih informatif dan siap untuk dianalisis lebih lanjut.
-  
+  Untuk menyederhanakan analisis, kolom **`Manufacturer`** disiapkan untuk disederhanakan hanya menjadi 10 merek paling populer dan sisanya dikelompokkan sebagai `'Other'`.
+  Terakhir, dibuat fitur **`Fuel_Efficiency_Proxy`** sebagai proksi efisiensi bahan bakar, yaitu rasio usia mobil terhadap volume mesin. Nilai ekstrem dan kosong ditangani dengan cara yang sama seperti sebelumnya.
+    
   ![image](https://github.com/user-attachments/assets/99bdd5d0-b561-42a5-a8e0-658318f832fa)
 
-- **Pembersihan string numerik** seperti `Mileage`, `Levy`, dan `Engine volume`.
-  Pertama, fitur numerik yang sudah dipilih, yaitu Levy, Mileage, Engine volume, Airbags, Car_Age, Mileage_per_Year, dan Fuel_Efficiency_Proxy, distandarisasi menggunakan StandardScaler. Proses standarisasi ini bertujuan untuk mengubah skala data agar semua fitur memiliki rata-rata nol dan standar deviasi satu. Dengan begitu, setiap fitur menjadi sebanding dan tidak ada yang terlalu dominan karena perbedaan skala nilai, sehingga algoritma machine learning dapat bekerja lebih optimal.
+- **Seleksi Fitur, Transformasi, dan Standarisasi** 
 
-  Selanjutnya, untuk target variabel Price, dilakukan transformasi logaritma dengan fungsi np.log1p(), yang merupakan logaritma dari (1 + nilai asli). Tujuan transformasi ini adalah untuk menstabilkan variansi data harga yang biasanya sangat bervariasi dan cenderung terdistribusi tidak normal (skewed). Dengan melakukan ini, model akan lebih mudah belajar pola dari target yang sudah lebih merata dan normal distribusinya.
+  Pada tahap ini, dilakukan normalisasi fitur numerik, transformasi target, serta encoding fitur kategori untuk mempersiapkan data sebelum pemodelan.
 
-  Kemudian, untuk fitur kategori yang terpilih seperti Manufacturer, Fuel type, Gear box type, Drive wheels, Wheel, Color, Age_Group, Category, dan Model, dilakukan proses one-hot encoding. Proses ini mengubah variabel kategori menjadi format numerik biner (0 dan 1) yang dapat dimengerti oleh model machine learning. Parameter drop_first=True digunakan supaya kolom pertama dari setiap kategori dihilangkan untuk menghindari masalah multikolinearitas (alias variabel yang saling sangat berkorelasi).
+  Fitur-fitur numerik seperti `Levy`, `Mileage`, `Engine volume`, `Airbags`, dan lainnya distandarisasi menggunakan **StandardScaler** agar memiliki skala yang seragam (rata-rata 0 dan standar deviasi 1). Hal ini penting agar algoritma pembelajaran tidak bias terhadap fitur dengan skala besar.
 
-  Dengan langkah-langkah ini, data menjadi lebih bersih, terstruktur, dan siap untuk proses analisis atau pembuatan model berikutnya.
+  Kemudian, target variabel **`Price`** ditransformasikan menggunakan **logaritma natural** (log(1 + x)) untuk menstabilkan variansi dan mengurangi skewness, sehingga model dapat mempelajari pola harga dengan lebih baik.
 
+  Selanjutnya, fitur-fitur kategori seperti `Manufacturer`, `Fuel type`, `Gear box type`, dan lainnya dikonversi menjadi format biner menggunakan **one-hot encoding**, dengan menghapus kolom pertama dari setiap kategori (`drop_first=True`) guna menghindari multikolinearitas. Langkah ini membuat data kategori siap digunakan dalam model berbasis numerik.
 
-- **Encoding kategorikal**: 
-  - Label Encoding untuk `brand`, `model`, dan `Fuel type`
-  - One-Hot Encoding hanya untuk beberapa kategori besar
-- **Feature Scaling** menggunakan StandardScaler pada `Mileage`, `Car_Age`, `Mileage_per_Year`
-- **Transformasi target `Price`** dengan `log1p` untuk mengatasi distribusi skewed
+  ![image](https://github.com/user-attachments/assets/5952ba27-f078-42ad-b5e8-426d216915fb)
+
+- **Pemisahan Dataset**
+
+  Pada tahap ini, dilakukan pemisahan data menjadi fitur dan target, dilanjutkan dengan pembagian data untuk proses pelatihan dan pengujian model.
+
+  Pertama, kolom **`Price`** dipisahkan sebagai **target (`y`)**, sedangkan semua kolom lain (kecuali `ID`) digunakan sebagai **fitur (`X`)**.
+  Data kemudian dibagi menjadi **training set (90%)** dan **testing set (10%)** menggunakan fungsi `train_test_split` agar model bisa dilatih dan diuji secara adil. Parameter `random_state=42` digunakan untuk memastikan pembagian data bersifat **reproducible**.
+
+  Selanjutnya, nama-nama kolom pada data training dan testing dibersihkan dari karakter ilegal seperti `[]`, `<>` yang dapat mengganggu proses pemodelan atau penyimpanan data.
+  Akhirnya, ditampilkan ukuran akhir dataset untuk memastikan bahwa proses pemisahan berhasil: jumlah data poin pada training dan testing set, serta jumlah total fitur setelah proses encoding kategori.
+ 
+  ![image](https://github.com/user-attachments/assets/43a8cf90-a3de-488d-b27c-894bc7542313)
 
 ---
 
 ## Modeling
 
-### Model yang digunakan:
-- **Random Forest Regressor**: model pohon acak yang tahan outlier
-- **XGBoost Regressor**: model boosting populer untuk prediksi tabular
+### Inisialisasi Model:
 
-### Evaluasi:
-- **MAE**: Mean Absolute Error
-- **RMSE**: Root Mean Squared Error
-- **R²**: Koefisien determinasi
+![image](https://github.com/user-attachments/assets/cc5561e0-1d3f-4433-b15e-00ffec3a6de3)
 
-### Tuning:
-GridSearchCV ringan dilakukan dengan kombinasi kecil dari:
-- `n_estimators`, `max_depth` untuk RandomForest
-- `learning_rate`, `colsample_bytree`, `max_depth` untuk XGBoost
+Pada tahap ini, dilakukan inisialisasi beberapa model regresi yang akan digunakan untuk memprediksi harga mobil berdasarkan fitur-fitur yang telah diproses sebelumnya.
+
+Tiga model yang dipilih adalah:
+
+* **Linear Regression**: model dasar yang sederhana dan cepat, cocok untuk melihat hubungan linear antar variabel.
+* **Random Forest Regressor**: model berbasis ensemble dari beberapa decision tree, mampu menangani data non-linear dan lebih tahan terhadap overfitting.
+* **XGBoost Regressor**: model boosting yang sangat powerful dan sering unggul dalam kompetisi machine learning, dirancang untuk efisiensi dan performa tinggi.
+
+Setiap model disiapkan dengan parameter dasar dan `random_state=42` agar hasilnya konsisten saat dijalankan ulang. Model-model ini nantinya akan dibandingkan kinerjanya pada data yang sama.
+
+### Latih dan Evaluasi Model:
+
+![image](https://github.com/user-attachments/assets/7cbacae7-f715-43aa-8c76-dd2de0398dd9)
+
+Pada tahap ini, dilakukan pelatihan dan evaluasi terhadap setiap model regresi menggunakan data yang telah dibagi sebelumnya.
+
+Setiap model dalam dictionary models dilatih menggunakan data training (X_train, y_train). Setelah pelatihan, model digunakan untuk memprediksi harga pada data testing (X_test), menghasilkan prediksi y_pred.
+
+Hasil prediksi kemudian dievaluasi menggunakan tiga metrik:
+
+MAE (Mean Absolute Error): rata-rata selisih absolut antara nilai asli dan prediksi.
+
+RMSE (Root Mean Squared Error): akar dari rata-rata selisih kuadrat, lebih sensitif terhadap outlier.
+
+R² (R-squared Score): menunjukkan seberapa baik model menjelaskan variasi data target (semakin mendekati 1, semakin baik).
+
+Hasil evaluasi dari tiap model disimpan dalam dictionary results, lalu dikonversi menjadi DataFrame (results_df) agar lebih mudah dibaca dan dibandingkan. Evaluasi dilakukan terhadap target yang telah ditransformasikan ke log(Price).
 
 ---
 
-## Hasil Evaluasi
+### Tuning dan Optimasi
 
-| Model                  | MAE     | RMSE    | R² Score |
-|------------------------|---------|---------|----------|
-|             Linear Regression           | ~0.946485           | ~1.367330        | ~0.285271         |
-| Random Forest Regressor| ~0.442549   | ~0.893156   | ~0.695035    |
-| XGBoost Regressor      | ~0.594116   | ~0.988063   | ~0.626781    |
+![image](https://github.com/user-attachments/assets/8d6a7ad0-37a4-4da2-8d35-36e1e767e2ce)
 
-Model **XGBoost** memberikan hasil terbaik dan digunakan sebagai model final.
+Pada tahap ini, dilakukan proses tuning hyperparameter menggunakan GridSearchCV untuk meningkatkan performa dua model terbaik sebelumnya: Random Forest dan XGBoost.
 
----
+GridSearch untuk Random Forest
 
-## Kesimpulan
+Dicoba beberapa kombinasi parameter seperti:
 
-Model prediksi harga mobil berhasil dibuat berdasarkan fitur-fitur kunci: **merk mobil**, **jarak tempuh**, dan **usia kendaraan**. Feature engineering memainkan peran penting untuk meningkatkan akurasi prediksi.
+max_depth: kedalaman maksimum pohon (10 dan 20)
 
-### Rekomendasi:
-- Gunakan dataset yang lebih besar dengan fitur tambahan seperti kondisi kendaraan.
-- Bangun API prediksi untuk digunakan pada platform jual beli mobil.
-- Lakukan integrasi scraping data real-time dari situs jual-beli kendaraan.
+n_estimators: jumlah pohon dalam hutan (100)
+
+min_samples_split dan min_samples_leaf: parameter kontrol pemisahan dan ukuran daun
+
+Evaluasi dilakukan dengan cross-validation (cv=2) menggunakan skor R² sebagai metrik.
+
+Hasil terbaik menunjukkan bahwa konfigurasi dengan max_depth=20 menghasilkan R² sebesar 0.598, dengan parameter lain tetap default.
+
+GridSearch untuk XGBoost
+
+Dicoba kombinasi parameter seperti:
+
+max_depth, learning_rate, n_estimators, subsample, dan colsample_bytree
+
+Evaluasi dilakukan dengan cross-validation (cv=2), menggunakan MAE negatif sebagai metrik (karena GridSearchCV secara default memaksimalkan skor).
+
+Hasil terbaik diperoleh pada:
+
+max_depth=6, learning_rate=0.05, n_estimators=200, dengan MAE negatif sebesar -0.673, artinya model cukup presisi terhadap target.
+
+🔧 Proses ini bertujuan untuk menemukan kombinasi parameter terbaik dari tiap model yang menghasilkan performa optimal pada data.
+
+### Feature Importance
+
+![image](https://github.com/user-attachments/assets/aedd199a-8e8f-4244-af64-61906a59ddb6)
+
+Pada tahap ini, dilakukan visualisasi feature importance dari model XGBoost terbaik yang diperoleh dari GridSearch.
+
+Apa pentingnya melakukan ini?
+
+Visualisasi ini bertujuan untuk mengetahui fitur-fitur mana saja yang paling berpengaruh dalam menentukan prediksi harga mobil (log(Price)). Dengan mengetahui fitur terpenting, kita bisa:
+
+- Memahami insight dari data, misalnya fitur Gear box type_Tiptronic ternyata sangat berkontribusi terhadap harga mobil.
+
+- Membantu pengambilan keputusan bisnis, seperti menyoroti fitur unggulan yang memengaruhi harga jual.
+
+- Menyederhanakan model di tahap selanjutnya dengan hanya mempertahankan fitur-fitur yang paling penting (feature selection), sehingga mengurangi kompleksitas dan meningkatkan efisiensi.
+
+- Menjelaskan hasil model ke stakeholder dengan lebih transparan (model interpretability).
+
+## Kesimpulan:
+
+- Model regresi yang dibangun, khususnya Random Forest Regressor, berhasil memprediksi harga mobil bekas dengan akurasi yang memadai.
+
+- Faktor-faktor seperti tahun pembuatan, jarak tempuh, dan jenis bahan bakar sangat mempengaruhi harga kendaraan.
+
+- Data preprocessing seperti pembersihan data, encoding, dan feature engineering sangat berpengaruh terhadap performa model.
+
+## Rekomendasi:
+- Dataset dapat diperluas dengan menambahkan fitur tambahan seperti lokasi, kondisi kendaraan, atau riwayat servis untuk meningkatkan akurasi prediksi.
+
+- Sistem ini dapat diintegrasikan ke dalam platform jual beli mobil untuk memberikan estimasi harga otomatis kepada pengguna.
+
+- Evaluasi berkala dan retraining model sangat disarankan agar model tetap relevan dengan tren pasar terbaru.
+
+- Pertimbangkan penggunaan teknik ensemble atau boosting (seperti XGBoost atau LightGBM) untuk eksplorasi lebih lanjut.
