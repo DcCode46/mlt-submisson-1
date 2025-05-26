@@ -153,6 +153,15 @@ Kode diatas menghasilkan ouput untuk melihat 5 baris pertama dari dataset yang b
   ![image](https://github.com/user-attachments/assets/99bdd5d0-b561-42a5-a8e0-658318f832fa)
 
 - **Pembersihan string numerik** seperti `Mileage`, `Levy`, dan `Engine volume`.
+  Pertama, fitur numerik yang sudah dipilih, yaitu Levy, Mileage, Engine volume, Airbags, Car_Age, Mileage_per_Year, dan Fuel_Efficiency_Proxy, distandarisasi menggunakan StandardScaler. Proses standarisasi ini bertujuan untuk mengubah skala data agar semua fitur memiliki rata-rata nol dan standar deviasi satu. Dengan begitu, setiap fitur menjadi sebanding dan tidak ada yang terlalu dominan karena perbedaan skala nilai, sehingga algoritma machine learning dapat bekerja lebih optimal.
+
+  Selanjutnya, untuk target variabel Price, dilakukan transformasi logaritma dengan fungsi np.log1p(), yang merupakan logaritma dari (1 + nilai asli). Tujuan transformasi ini adalah untuk menstabilkan variansi data harga yang biasanya sangat bervariasi dan cenderung terdistribusi tidak normal (skewed). Dengan melakukan ini, model akan lebih mudah belajar pola dari target yang sudah lebih merata dan normal distribusinya.
+
+  Kemudian, untuk fitur kategori yang terpilih seperti Manufacturer, Fuel type, Gear box type, Drive wheels, Wheel, Color, Age_Group, Category, dan Model, dilakukan proses one-hot encoding. Proses ini mengubah variabel kategori menjadi format numerik biner (0 dan 1) yang dapat dimengerti oleh model machine learning. Parameter drop_first=True digunakan supaya kolom pertama dari setiap kategori dihilangkan untuk menghindari masalah multikolinearitas (alias variabel yang saling sangat berkorelasi).
+
+  Dengan langkah-langkah ini, data menjadi lebih bersih, terstruktur, dan siap untuk proses analisis atau pembuatan model berikutnya.
+
+
 - **Encoding kategorikal**: 
   - Label Encoding untuk `brand`, `model`, dan `Fuel type`
   - One-Hot Encoding hanya untuk beberapa kategori besar
